@@ -29,7 +29,7 @@ function windModel(afVertexData, aiIndexData)
     this.m_iNumIndices  = aiIndexData.length;
 
     // define index format
-    this.m_iIndexFormat = (WIND.IsExperimental || (this.m_iNumVertices > 256)) ? GL.UNSIGNED_SHORT : GL.UNSIGNED_BYTE;
+    this.m_iIndexFormat = (GL.bIsExperimental || (this.m_iNumVertices > 256)) ? GL.UNSIGNED_SHORT : GL.UNSIGNED_BYTE;
 
     // create vertex buffer
     this.m_iVertexBuffer = GL.createBuffer();

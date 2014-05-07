@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+    <!--
+        For embedding as fullscreen-enabled <iframe> - let the user decide when to load the actual game.
+    -->
+
+    <head>
+
+        <title>Wind App - Launcher</title>
+        
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+        <meta name="robots" content="noindex, follow" />
+
+        <link rel="stylesheet" href="game/data/style.css" type="text/css" />
+
+        <script>
+            function Init()
+            {
+                // forward URL parameters
+                var sAnd = window.location.search ? "&" : "?";
+                document.getElementById("play").href = "game/index.html" + window.location.search + sAnd + "launcher=1";
+            }
+        </script>
+
+    </head>
+
+    <body onload="Init()" style="background-color: black; margin: 0px; display: block; font-size: 100%;">
+
+        <div class="middle" style="font-size: 2.6em; top: 50.0%; width: 400px; height: 60px; margin: -30px 0 0 -200px; opacity: 1.0; pointer-events: auto;">
+            <font class="header" onclick="this.innerHTML='Loading';"><a id="play" href="">Play</a></font>
+        </div>
+
+    </body>
+    
+</html>
