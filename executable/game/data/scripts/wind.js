@@ -34,8 +34,8 @@
 //|   distribution.                                                              |//
 //*------------------------------------------------------------------------------*//
 ////////////////////////////////////////////////////////////////////////////////////
-
-WIND = {};
+"use strict";
+var WIND = {};
 
 
 // ****************************************************************
@@ -288,7 +288,7 @@ WIND.SetupInput = function()
         // get touch input
         pEvent.preventDefault();
         var pTouch = pEvent.touches[0];
-        if(pEvent.touches.length >= 3) APP.Pause(true);
+        if(pEvent.touches.length >= 3) APP.PauseGame(true);
 
         // set mouse position relative to the canvas
         WIND.g_vMousePos[0] = pTouch.pageX*WIND.g_fMouseRange - WIND.g_fMouseRect[0];
@@ -303,13 +303,13 @@ WIND.SetupInput = function()
 
         // check for enter, escape and whitespace
         if(iKey === 13 || iKey === 27 || iKey === 32)
-            APP.Pause(true);
+            APP.PauseGame(true);
         else
             APP.KeyDown(iKey);
     }, false);
 
     // implement auto-pause if window-focus is lost
-    window.addEventListener("blur", function() {APP.Pause(true);}, false);
+    window.addEventListener("blur", function() {APP.PauseGame(true);}, false);
 };
 
 
