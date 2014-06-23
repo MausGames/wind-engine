@@ -73,3 +73,9 @@ APP.ChangeOptionSound = function(bStatus)
 {
 
 };
+
+// ****************************************************************
+APP.Resize = function()
+{
+
+};

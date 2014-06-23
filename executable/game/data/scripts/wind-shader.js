@@ -10,7 +10,7 @@
 
 
 // ****************************************************************
-windShader.s_iCurProgram = 0;
+windShader.s_iCurProgram = null;
 
 
 // ****************************************************************
@@ -39,7 +39,8 @@ function windShader(sVertexShader, sFragmentShader)
 
     // bind specific attributes
     GL.bindAttribLocation(this.m_iProgram, 0, "a_v3Position");
-    GL.bindAttribLocation(this.m_iProgram, 1, "a_v3Normal");
+    GL.bindAttribLocation(this.m_iProgram, 1, "a_v2Texture");
+    GL.bindAttribLocation(this.m_iProgram, 2, "a_v3Normal");
 
     // link program
     GL.linkProgram(this.m_iProgram);
@@ -63,8 +64,12 @@ function windShader(sVertexShader, sFragmentShader)
 
 
 // ****************************************************************
-windShader.prototype.Clear = function()
+windShader.prototype.Destruct = function()
 {
+    // reset current shader
+    if(windShader.s_iCurProgram === this.m_iProgram)
+        windShader.s_iCurProgram = null;
+
     // detach and delete shaders
     GL.detachShader(this.m_iProgram, this.m_iVertexShader);
     GL.detachShader(this.m_iProgram, this.m_iFragmentShader);
@@ -84,5 +89,17 @@ windShader.prototype.Enable = function()
         // enable program
         windShader.s_iCurProgram = this.m_iProgram;
         GL.useProgram(this.m_iProgram);
+    }
+};
+
+
+// ****************************************************************
+windShader.Disable = function()
+{
+    if(windShader.s_iCurProgram !== null)
+    {
+        // disable program
+        windShader.s_iCurProgram = null;
+        GL.useProgram(null);
     }
 };

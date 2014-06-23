@@ -156,7 +156,7 @@ WIND.Init = function()
     WIND.SetupMenu();
     WIND.SetupRefresh();
 
-    // init model class
+    // init resource classes
     windModel.Init();
     windTexture.Init();
     windShader.Init();
@@ -333,11 +333,11 @@ WIND.SetupMenu = function()
     WIND.g_pMenuSound   = document.getElementById("sound");
 
     // implement start button
-    WIND.g_pMenuStart.onmousedown = function()
+    WIND.g_pMenuStart.addEventListener("mousedown", function()
     {
         // call start function
         APP.StartGame();
-    };
+    }, false);
 
     // implement fullscreen button
     WIND.g_pMenuFull.addEventListener("click", function()
@@ -459,6 +459,9 @@ WIND.Resize = function()
     WIND.g_fMouseRange   = 1.0 / WIND.g_pCanvas.height;
     WIND.g_fMouseRect[0] = (oRect.left + (oRect.right  - oRect.left)/2) * WIND.g_fMouseRange;
     WIND.g_fMouseRect[1] = (oRect.top  + (oRect.bottom - oRect.top )/2) * WIND.g_fMouseRange;
+    
+    // call resize callback
+    APP.Resize();
 };
 
 

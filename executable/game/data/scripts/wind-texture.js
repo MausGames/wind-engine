@@ -38,15 +38,18 @@ function windTexture(pTextureData)
     GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T,     GL.CLAMP_TO_EDGE);
     GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, pTextureData);
 
-    // reset current texture
-    windTexture.s_iCurTexture = null;
-    GL.bindTexture(GL.TEXTURE_2D, null);
+    // set current texture
+    windTexture.s_iCurTexture = this.m_iTexture;
 }
 
 
 // ****************************************************************
-windTexture.prototype.Clear = function()
+windTexture.prototype.Destruct = function()
 {
+    // reset current texture
+    if(windTexture.s_iCurTexture === this.m_iTexture)
+        windTexture.s_iCurTexture = null;
+        
     // delete texture
     GL.deleteTexture(this.m_iTexture);
 };
@@ -65,7 +68,7 @@ windTexture.prototype.Enable = function()
 
 
 // ****************************************************************
-windTexture.prototype.Disable = function()
+windTexture.Disable = function()
 {
     if(windTexture.s_iCurTexture !== null)
     {

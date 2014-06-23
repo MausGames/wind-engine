@@ -10,7 +10,7 @@
 
 
 // ****************************************************************
-windModel.s_iCurVertexBuffer = 0;
+windModel.s_iCurVertexBuffer = null;
 
 
 // ****************************************************************
@@ -19,6 +19,7 @@ windModel.Init = function()
     // enable vertex attribute arrays
     GL.enableVertexAttribArray(0);
     GL.enableVertexAttribArray(1);
+    GL.enableVertexAttribArray(2);
 };
 
 
@@ -43,13 +44,17 @@ function windModel(afVertexData, aiIndexData)
     GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, (this.m_iIndexFormat === GL.UNSIGNED_SHORT) ? new Uint16Array(aiIndexData) : new Uint8Array(aiIndexData), GL.STATIC_DRAW);
 
     // reset current vertex buffer
-    windModel.s_iCurVertexBuffer = 0;
+    windModel.s_iCurVertexBuffer = null;
 }
 
 
 // ****************************************************************
-windModel.prototype.Clear = function()
+windModel.prototype.Destruct = function()
 {
+    // reset current vertex buffer
+    if(windModel.s_iCurVertexBuffer === this.m_iVertexBuffer)
+        windModel.s_iCurVertexBuffer = null;
+        
     // delete vertex and index buffer
     GL.deleteBuffer(this.m_iVertexBuffer);
     GL.deleteBuffer(this.m_iIndexBuffer);
@@ -67,8 +72,9 @@ windModel.prototype.Render = function()
         GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.m_iIndexBuffer);
 
         // set attributes
-        GL.vertexAttribPointer(0, 3, GL.FLOAT, false, 6*4, 0);
-        GL.vertexAttribPointer(1, 3, GL.FLOAT, false, 6*4, 3*4);
+        GL.vertexAttribPointer(0, 3, GL.FLOAT, false, 8*4, 0);
+        GL.vertexAttribPointer(1, 2, GL.FLOAT, false, 8*4, 3*4);
+        GL.vertexAttribPointer(2, 3, GL.FLOAT, false, 8*4, 5*4);
     }
 
     // draw the model
