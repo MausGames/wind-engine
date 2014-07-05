@@ -8,5 +8,3 @@ It is mainly intended for simple personal projects, which then are able to use t
 > - WebGL and Web Audio API Integration
 > - Prototypes for Models, Textures, Shaders, Framebuffers and Sounds
 > - Light Handling of Menu, Time, Camera, Input and Music
-
-Documentation for the engine is currently not available.
