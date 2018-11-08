@@ -10,9 +10,9 @@
 //*------------------------------------------------------------------------------*//
 ////////////////////////////////////////////////////////////////////////////////////
 //*------------------------------------------------------------------------------*//
-//| Wind Engine v0.0.1a (http://www.maus-games.at)                               |//
+//| Wind Engine v0.0.1a (https://www.maus-games.at)                              |//
 //*------------------------------------------------------------------------------*//
-//| Copyright (c) 2014 Martin Mauersics                                          |//
+//| Copyright (c) 2014-2015 Martin Mauersics                                     |//
 //|                                                                              |//
 //| This software is provided 'as-is', without any express or implied            |//
 //| warranty. In no event will the authors be held liable for any damages        |//
@@ -120,7 +120,7 @@ WIND.Init = function()
     // retrieve main canvas
     WIND.g_pCanvas = document.getElementById("canvas");
 
-    // define WebGL context properties (with stencil buffer)
+    // define WebGL context properties
     var abProperty = {alpha : true, depth : true, stencil : false, antialias : true,
                       premultipliedAlpha : true, preserveDrawingBuffer : false};
 
@@ -136,7 +136,7 @@ WIND.Init = function()
             document.body.innerHTML = "<p style='font: bold 16px sans-serif; position: absolute; left: 50%; top: 50%; width: 400px; height: 140px; margin: -70px 0 0 -200px; text-align: center;'>" +
                                       "<img src='data/images/webgl_logo.png' alt='WebGL' width='163' height='75' /><br/>" +
                                       "Your browser sucks and doesn't support WebGL.<br/>" +
-                                      "Visit <a href='http://get.webgl.org/' style='color: blue;'>http://get.webgl.org/</a> for more information.</p>";
+                                      "Visit <a href='https://get.webgl.org/' style='color: blue;'>https://get.webgl.org/</a> for more information.</p>";
             return;
         }
 
@@ -193,7 +193,7 @@ WIND.Render = function(iNewTime)
     // calculate elapsed and total time
     var fNewSaveTime = iNewTime * 0.001;
     var fNewTime     = Math.abs(fNewSaveTime - WIND.g_fSaveTime);
-    WIND.g_fSaveTime      = fNewSaveTime;
+    WIND.g_fSaveTime = fNewSaveTime;
 
     // smooth out inconsistent framerates
     WIND.g_fTime       = (fNewTime > 0.125) ? 0.0 : (0.85*WIND.g_fTime + 0.15*fNewTime);
@@ -231,7 +231,6 @@ WIND.SetupVideo = function()
     // enable depth testing
     GL.enable(GL.DEPTH_TEST);
     GL.depthFunc(GL.LEQUAL);
-    GL.polygonOffset(1.1, 4.0);
     GL.clearDepth(1.0);
 
     // enable culling
