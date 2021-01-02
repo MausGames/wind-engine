@@ -24,53 +24,31 @@
 //*----------------------------------------------------------------------------*//
 //////////////////////////////////////////////////////////////////////////////////
 "use strict";
-var WIND = {};
+const WIND = {};
+
+// TODO: move more default functionality from ThrowOut to WindEngine (especially related to pause and menu handling, which is currently only partially ported to engine)
 
 
 // ****************************************************************
-// get URL parameters
-var asQueryParam = function()
-{
-    var asOutput = {};
-    var asList   = window.location.search.substring(1).split("&");
+let GL  = null;                           // WebGL context
+let TEX = null;                           // texture canvas (and 2d context)
 
-    // loop through all parameters
-    for(var i = 0; i < asList.length; ++i)
-    {
-        // seperate key from value
-        var asPair = asList[i].split("=");
-
-        // insert value into map
-        if(typeof asOutput[asPair[0]] === "undefined")
-            asOutput[asPair[0]] = asPair[1];                          // create new entry
-        else if(typeof asOutput[asPair[0]] === "string")
-            asOutput[asPair[0]] = [asOutput[asPair[0]], asPair[1]];   // extend into array
-        else
-            asOutput[asPair[0]].push(asPair[1]);                      // append to array
-    }
-
-    return asOutput;
-}();
-
-
-// ****************************************************************
-var GL  = null;                           // WebGL context
-var TEX = null;                           // texture context
-
-WIND.g_pCanvas  = null;                   // main canvas
-WIND.g_pTexture = null;                   // texture canvas
-WIND.g_pAudio   = null;                   // audio stream
+WIND.g_pCanvas       = null;              // main canvas
+WIND.g_pAudioStream  = null;              // audio stream
+WIND.s_pAudioContext = null;              // audio context
 
 WIND.g_pMenuLogo    = null;               // main logo
 WIND.g_pMenuHeader  = null;               // game header
 WIND.g_pMenuOption1 = null;               // menu option first
 WIND.g_pMenuOption2 = null;               // menu option second
+WIND.g_pMenuOption3 = null;               // menu option third
 WIND.g_pMenuRight   = null;               // text bottom right
 WIND.g_pMenuLeft    = null;               // text bottom left
 WIND.g_pMenuVideo   = null;               // text top right
 WIND.g_pMenuAudio   = null;               // text top left
 WIND.g_pMenuStart   = null;               // button start
-WIND.g_pMenuEnd     = null;               // button end
+WIND.g_pMenuResume  = null;               // button resume
+WIND.g_pMenuRestart = null;               // button restart
 WIND.g_pMenuFull    = null;               // button fullscreen
 WIND.g_pMenuQuality = null;               // button quality
 WIND.g_pMenuMusic   = null;               // button music
@@ -91,52 +69,59 @@ WIND.g_fSaveTime  = 0.0;                  // saved time value to calculate last 
 WIND.g_fTotalTime = 0.0;                  // total time since start of the application
 WIND.g_fTime      = 0.0;                  // last frame time
 
-WIND.g_iMusicCurrent = 0;                 // current music file
+WIND.g_bStarted = false;                  // 
+WIND.g_bEnded   = false;                  // 
+WIND.g_bPaused  = false;                  // 
 
-WIND.g_bQuality = true;                   // current quality level
-WIND.g_bMusic   = true;                   // current music status
-WIND.g_bSound   = true;                   // current sound status
+WIND.g_bOptionQuality = true;             // current quality level
+WIND.g_bOptionMusic   = true;             // current music status
+WIND.g_bOptionSound   = true;             // current sound status
 
 WIND.g_iRequestID = 0;                    // ID from requestAnimationFrame()
 
-WIND.g_mMatrix = mat4.create();           // pre-allocated general purpose matrix
-WIND.g_vVector = vec4.create();           // pre-allocated general purpose vector
+WIND.M = mat4.create();                   // pre-allocated general purpose matrix
+WIND.V = vec4.create();                   // pre-allocated general purpose vector
+WIND.Q = quat.create();                   // pre-allocated general purpose quaternion
 
 
 // ****************************************************************
-WIND.Init = function()
+window.addEventListener("load", function()
 {
     // retrieve main canvas
     WIND.g_pCanvas = document.getElementById("canvas");
 
     // define WebGL context properties
-    var abProperty = {alpha : true, depth : true, stencil : false, antialias : true,
-                      premultipliedAlpha : true, preserveDrawingBuffer : false};
+    const abProperty = {alpha : APP.SETTINGS.Alpha, depth : APP.SETTINGS.Depth, stencil : APP.SETTINGS.Stencil,
+                        antialias : true, premultipliedAlpha : true, preserveDrawingBuffer : false,
+                        preferLowPowerToHighPerformance : false, failIfMajorPerformanceCaveat : false};
 
     // retrieve WebGL context
-    GL = WIND.g_pCanvas.getContext("webgl", abProperty);
+    GL = WIND.g_pCanvas.getContext("webgl2", abProperty);
     if(!GL)
     {
-        GL = WIND.g_pCanvas.getContext("experimental-webgl", abProperty);
+        GL = WIND.g_pCanvas.getContext("webgl", abProperty);
         if(!GL)
         {
-            // show error page
-            document.body.style.background = "#FAFAFF";
-            document.body.innerHTML = "<p style='font: bold 16px sans-serif; position: absolute; left: 50%; top: 50%; width: 400px; height: 140px; margin: -70px 0 0 -200px; text-align: center;'>" +
-                                      "<img src='data/images/webgl_logo.png' alt='WebGL' width='163' height='75' /><br/>" +
-                                      "Your browser sucks and doesn't support WebGL.<br/>" +
-                                      "Visit <a href='https://get.webgl.org/' style='color: blue;'>https://get.webgl.org/</a> for more information.</p>";
+            // show error
+            document.body.innerHTML = "Your browser does not support WebGL.";
             return;
         }
 
-        // save experimental WebGL status
-        GL.bIsExperimental = true;
+        // save WebGL status
+        GL.iVersion = 1;
     }
-    else GL.bIsExperimental = false;
+    else GL.iVersion = 2;
+
+    // log context information
+    console.info("Vendor: "         + GL.getParameter(GL.VENDOR));
+    console.info("Renderer: "       + GL.getParameter(GL.RENDERER));
+    console.info("WebGL Version: "  + GL.getParameter(GL.VERSION));
+    console.info("Shader Version: " + GL.getParameter(GL.SHADING_LANGUAGE_VERSION));
+    console.info(GL.getSupportedExtensions());
 
     // retrieve texture canvas and 2d context
-    WIND.g_pTexture = document.getElementById("texture");
-    TEX = WIND.g_pTexture.getContext("2d");
+    TEX = document.getElementById("texture");
+    TEX.DRAW = TEX.getContext("2d");
 
     // setup system components
     WIND.SetupVideo();
@@ -145,26 +130,20 @@ WIND.Init = function()
     WIND.SetupMenu();
     WIND.SetupRefresh();
 
-    // init resource classes
-    windModel.Init();
-    windTexture.Init();
-    windShader.Init();
-    windSound.Init();
-
-    // resize everything dynamically
-    document.body.onresize = WIND.Resize;
-    WIND.Resize();
-
     // init application
     APP.Init();
 
-    // start engine (requestAnimationFrame in Move())
+    // resize everything dynamically
+    window.addEventListener("resize", WIND.Resize);
+    WIND.Resize();
+
+    // start engine (requestAnimationFrame() in Move())
     WIND.Move();
-};
+});
 
 
 // ****************************************************************
-window.addEventListener("beforeunload", function()   // WIND.Exit()
+window.addEventListener("beforeunload", function()
 {
     if(!GL) return;
 
@@ -173,19 +152,19 @@ window.addEventListener("beforeunload", function()   // WIND.Exit()
 
     // cancel last animation frame
     window.cancelAnimationFrame(WIND.g_iRequestID);
-}, false);
+});
 
 
 // ****************************************************************
 WIND.Render = function(iNewTime)
 {
-    // calculate elapsed and total time
-    var fNewSaveTime = iNewTime * 0.001;
-    var fNewTime     = Math.abs(fNewSaveTime - WIND.g_fSaveTime);
-    WIND.g_fSaveTime = fNewSaveTime;
+    // calculate last frame time
+    const fNewSaveTime = iNewTime * 0.001;
+    const fNewLastTime = Math.max(fNewSaveTime - WIND.g_fSaveTime, 0.0);
+    WIND.g_fSaveTime   = fNewSaveTime;
 
-    // smooth out inconsistent framerates
-    WIND.g_fTime       = (fNewTime > 0.125) ? 0.0 : (0.85*WIND.g_fTime + 0.15*fNewTime);
+    // smooth last frame time and increase total time
+    WIND.g_fTime       = (fNewLastTime > 0.1) ? 0.0 : (0.85 * WIND.g_fTime + 0.15 * fNewLastTime);
     WIND.g_fTotalTime += WIND.g_fTime;
 
     // clear framebuffer
@@ -196,7 +175,7 @@ WIND.Render = function(iNewTime)
 
     // move engine
     WIND.Move();
-}
+};
 
 
 // ****************************************************************
@@ -204,56 +183,99 @@ WIND.Move = function()
 {
     // move application
     APP.Move();
-    
+
     // update camera matrix
     mat4.lookAt(WIND.g_mCamera, WIND.g_vCamPosition, WIND.g_vCamTarget, WIND.g_vCamOrientation);
 
     // request next frame
-    GL.flush(); // just in case, but not required
-    WIND.g_iRequestID = requestAnimationFrame(WIND.Render, WIND.g_pCanvas);
-}
+    WIND.g_iRequestID = requestAnimationFrame(WIND.Render);
+};
 
 
 // ****************************************************************
 WIND.SetupVideo = function()
 {
-    // enable depth testing
+    // load extensions
+    GL.ExtAnisotropic = GL.getExtension("EXT_texture_filter_anisotropic");
+    if(GL.ExtAnisotropic) GL.ExtAnisotropic.fMaxAnisotropy = GL.getParameter(GL.ExtAnisotropic.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+
+    // setup texturing and packing
+    GL.hint(GL.GENERATE_MIPMAP_HINT, GL.NICEST);
+    GL.pixelStorei(GL.PACK_ALIGNMENT,   4);
+    GL.pixelStorei(GL.UNPACK_ALIGNMENT, 4);
+    GL.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, true);
+
+    // setup depth testing
     GL.enable(GL.DEPTH_TEST);
     GL.depthFunc(GL.LEQUAL);
+    GL.depthMask(true);
     GL.clearDepth(1.0);
 
-    // enable culling
+    // setup culling
     GL.enable(GL.CULL_FACE);
     GL.cullFace(GL.BACK);
     GL.frontFace(GL.CCW);
 
-    // enable alpha blending
+    // setup alpha blending
     GL.enable(GL.BLEND);
+    GL.disable(GL.SAMPLE_ALPHA_TO_COVERAGE);
     GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+    GL.blendEquation(GL.FUNC_ADD);
+
+    // setup shading and rasterization
+    if(GL.iVersion >= 2) GL.hint(GL.FRAGMENT_SHADER_DERIVATIVE_HINT, GL.NICEST);
+    GL.disable(GL.DITHER);
+    GL.colorMask(true, true, true, true);
+    GL.clearColor(0.0, 0.0, 0.0, 0.0);
 
     // reset scene
-    GL.clearColor(0.0, 0.0, 0.0, 1.0);
     GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 };
-    
-    
+
+
 // ****************************************************************
 WIND.SetupAudio = function()
 {
-    if(!APP.MUSIC_LIST.length) return;
+    // create audio context
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    if(window.AudioContext) WIND.s_pAudioContext = new AudioContext();
 
-    // retrieve audio stream and load first music file
-    WIND.g_pAudio     = document.getElementById("stream");
-    WIND.g_pAudio.src = APP.MUSIC_LIST[WIND.g_iMusicCurrent];
+    // retrieve audio stream
+    WIND.g_pAudioStream = document.getElementById("stream");
 
-    // add event for endless music loop
-    WIND.g_pAudio.addEventListener("ended", function()
+    // check for supported audio format
+    const sFormat = (WIND.g_pAudioStream.canPlayType && (WIND.g_pAudioStream.canPlayType("audio/ogg") !== "")) ? ".ogg" : ".mp3";
+
+    // 
+    WIND.g_pAudioStream.bPaused = true;
+    WIND.g_pAudioStream.Load = function(sPath)
     {
-        // play next music file
-        if(++WIND.g_iMusicCurrent >= APP.MUSIC_LIST.length) WIND.g_iMusicCurrent = 0;
-        this.src = APP.MUSIC_LIST[WIND.g_iMusicCurrent];
-        this.play();
-    });
+        this.Pause();
+        this.src = sPath + sFormat;
+    };
+    WIND.g_pAudioStream.Play = function()
+    {
+        this.bPaused = false;
+        if(WIND.g_bOptionMusic) this.play();
+    };
+    WIND.g_pAudioStream.Pause = function()
+    {
+        this.bPaused = true;
+        this.pause();
+    };
+
+    // try to resume an unintentional pause (just check for everything which may cause it)
+    const pResume = function()
+    {
+        if(WIND.g_bOptionMusic && !this.bPaused) this.play();
+    };
+    WIND.g_pAudioStream.addEventListener("abort",   pResume);
+    WIND.g_pAudioStream.addEventListener("canplay", pResume);
+    WIND.g_pAudioStream.addEventListener("error",   pResume);
+    WIND.g_pAudioStream.addEventListener("pause",   pResume);
+    WIND.g_pAudioStream.addEventListener("stalled", pResume);
+    WIND.g_pAudioStream.addEventListener("suspend", pResume);
+    WIND.g_pAudioStream.addEventListener("waiting", pResume);
 };
 
 
@@ -266,38 +288,48 @@ WIND.SetupInput = function()
         // set mouse position relative to the canvas
         WIND.g_vMousePos[0] = pCursor.clientX*WIND.g_fMouseRange - WIND.g_fMouseRect[0];
         WIND.g_vMousePos[1] = pCursor.clientY*WIND.g_fMouseRange - WIND.g_fMouseRect[1];
-
-        return true;
-    }, false);
+    });
 
     // implement touch event movement
     document.addEventListener("touchmove", function(pEvent)
     {
-        // get touch input
         pEvent.preventDefault();
-        var pTouch = pEvent.touches[0];
-        if(pEvent.touches.length >= 3) APP.PauseGame(true);
+
+        // get touch input
+        if(pEvent.touches.length >= 3) WIND.PauseGame(true);
+        const pTouch = pEvent.touches[0];
 
         // set mouse position relative to the canvas
         WIND.g_vMousePos[0] = pTouch.pageX*WIND.g_fMouseRange - WIND.g_fMouseRect[0];
         WIND.g_vMousePos[1] = pTouch.pageY*WIND.g_fMouseRange - WIND.g_fMouseRect[1];
-    }, false);
+    });
 
-    // implement pause
+    // implement mouse button input
+    document.addEventListener("mousedown", function(pEvent)
+    {
+        APP.MouseDown(pEvent.button);
+    });
+    document.addEventListener("mouseup", function(pEvent)
+    {
+        APP.MouseUp(pEvent.button);
+    });
+
+    // implement keyboard key input
     document.addEventListener("keydown", function(pEvent)
     {
-        pEvent   = window.event || pEvent;
-        var iKey = pEvent.charCode || pEvent.keyCode;
-
-        // check for enter, escape and whitespace
-        if(iKey === 13 || iKey === 27 || iKey === 32)
-            APP.PauseGame(true);
-        else
-            APP.KeyDown(iKey);
-    }, false);
+        if(pEvent.code === UTILS.KEY.ESCAPE) WIND.PauseGame(true);
+        APP.KeyDown(pEvent.code);
+    });
+    document.addEventListener("keyup", function(pEvent)
+    {
+        APP.KeyUp(pEvent.code);
+    });
 
     // implement auto-pause if window-focus is lost
-    window.addEventListener("blur", function() {APP.PauseGame(true);}, false);
+    window.addEventListener("blur", function()
+    {
+        WIND.PauseGame(true);
+    });
 };
 
 
@@ -309,12 +341,14 @@ WIND.SetupMenu = function()
     WIND.g_pMenuHeader  = document.getElementById("text-header");
     WIND.g_pMenuOption1 = document.getElementById("text-option-1");
     WIND.g_pMenuOption2 = document.getElementById("text-option-2");
+    WIND.g_pMenuOption3 = document.getElementById("text-option-3");
     WIND.g_pMenuRight   = document.getElementById("text-bottom-right");
     WIND.g_pMenuLeft    = document.getElementById("text-bottom-left");
     WIND.g_pMenuVideo   = document.getElementById("text-top-right");
     WIND.g_pMenuAudio   = document.getElementById("text-top-left");
     WIND.g_pMenuStart   = document.getElementById("start");
-    WIND.g_pMenuEnd     = document.getElementById("end");
+    WIND.g_pMenuResume  = document.getElementById("resume");
+    WIND.g_pMenuRestart = document.getElementById("restart");
     WIND.g_pMenuFull    = document.getElementById("fullscreen");
     WIND.g_pMenuQuality = document.getElementById("quality");
     WIND.g_pMenuMusic   = document.getElementById("music");
@@ -323,12 +357,17 @@ WIND.SetupMenu = function()
     // implement start button
     WIND.g_pMenuStart.addEventListener("mousedown", function()
     {
-        // call start function
-        APP.StartGame();
-    }, false);
+        WIND.StartGame();
+    });
+
+    // implement resume button
+    WIND.g_pMenuResume.addEventListener("mousedown", function()
+    {
+        WIND.PauseGame(false);
+    });
 
     // implement fullscreen button
-    WIND.g_pMenuFull.addEventListener("click", function()
+    WIND.g_pMenuFull.addEventListener("click", function()   // #
     {
         if(document.fullscreenElement       || document.mozFullScreenElement ||
            document.webkitFullscreenElement || document.msFullscreenElement)
@@ -341,75 +380,129 @@ WIND.SetupMenu = function()
         }
         else
         {
-            var pDoc = document.documentElement;
-            
+            const pDoc = document.documentElement;
+
             // enable fullscreen mode
                  if(pDoc.requestFullscreen)       pDoc.requestFullscreen();
             else if(pDoc.mozRequestFullScreen)    pDoc.mozRequestFullScreen();
             else if(pDoc.webkitRequestFullscreen) pDoc.webkitRequestFullscreen();
             else if(pDoc.msRequestFullscreen)     pDoc.msRequestFullscreen();
         }
-    }, false);
+    });
 
     // implement quality button
     WIND.g_pMenuQuality.addEventListener("mousedown", function()
     {
-        WIND.g_bQuality = !WIND.g_bQuality;
-        this.style.color = WIND.g_bQuality ? "" : "#444444";
+        WIND.g_bOptionQuality = !WIND.g_bOptionQuality;
+        this.style.color = WIND.g_bOptionQuality ? "" : "#444444";
 
         // call change function
-        APP.ChangeOptionQuality(WIND.g_bQuality);
-    }, false);
+        APP.ChangeOptionQuality(WIND.g_bOptionQuality);
+    });
 
     // implement volume buttons
     WIND.g_pMenuMusic.addEventListener("mousedown", function()
     {
-        WIND.g_bMusic = !WIND.g_bMusic;
-        this.style.color = WIND.g_bMusic ? "" : "#444444";
+        WIND.g_bOptionMusic = !WIND.g_bOptionMusic;
+        this.style.color = WIND.g_bOptionMusic ? "" : "#444444";
 
         // call change function
-        APP.ChangeOptionMusic(WIND.g_bMusic);
-    }, false);
+        APP.ChangeOptionMusic(WIND.g_bOptionMusic);
+    });
     WIND.g_pMenuSound.addEventListener("mousedown", function()
     {
-        WIND.g_bSound = !WIND.g_bSound;
-        this.style.color = WIND.g_bSound ? "" : "#444444";
+        WIND.g_bOptionSound = !WIND.g_bOptionSound;
+        this.style.color = WIND.g_bOptionSound ? "" : "#444444";
 
         // call change function
-        APP.ChangeOptionSound(WIND.g_bSound);
-    }, false);
-
-    // adjust back button
-    WIND.g_pMenuOption2.innerHTML = "<font id='end'><a href='javascript:history.go(-" + (asQueryParam["launcher"] ? 2 : 1) + ")'>Go Back</a></font>";
+        APP.ChangeOptionSound(WIND.g_bOptionSound);
+    });
 };
 
 
 // ****************************************************************
 WIND.SetupRefresh = function()
 {
-    var iLastTime = 0;
-    var asVendor  = ["moz", "webkit", "ms", "o"];
+    if(window.requestAnimationFrame && window.cancelAnimationFrame) return;
+
+    const asVendor = ["moz", "webkit", "ms"];
 
     // unify different animation functions
-    for(var i = 0; i < asVendor.length && !window.requestAnimationFrame; ++i)
+    for(let i = 0, ie = asVendor.length; (i < ie) && !window.requestAnimationFrame && !window.cancelAnimationFrame; ++i)
     {
         window.requestAnimationFrame = window[asVendor[i] + "RequestAnimationFrame"];
         window.cancelAnimationFrame  = window[asVendor[i] + "CancelAnimationFrame"] || window[asVendor[i] + "CancelRequestAnimationFrame"];
     }
 
     // implement alternatives on missing animation functions
-    if(!window.requestAnimationFrame)
+    if(!window.requestAnimationFrame || !window.cancelAnimationFrame)
     {
+        let iLastTime = 0;
         window.requestAnimationFrame = function(pCallback)
         {
-            var iCurTime = new Date().getTime();
-            var iTime    = Math.max(0, 16 - (iCurTime - iLastTime));
+            const iCurTime = new Date().getTime();
+            const iTime    = Math.max(0, 16 - (iCurTime - iLastTime));
 
             iLastTime = iCurTime + iTime;
-            return window.setTimeout(function() {pCallback(iLastTime);}, iTime);
+            return window.setTimeout(function()
+            {
+                pCallback(iLastTime);
+            }, iTime);
         };
-        window.cancelAnimationFrame = function(iID) {clearTimeout(iID);};
+        window.cancelAnimationFrame = function(iID)
+        {
+            clearTimeout(iID);
+        };
     }
+};
+
+
+// ****************************************************************
+WIND.StartGame = function()
+{
+    // start game (pause will be enabled)
+    WIND.g_bStarted = true;
+    APP.StartGame();
+};
+
+
+// ****************************************************************
+WIND.EndGame = function()
+{
+    // end game (pause will be disabled)
+    WIND.PauseGame(false);
+    WIND.g_bEnded = true;
+};
+
+
+// ****************************************************************
+WIND.PauseGame = function(bStatus)
+{
+    // 
+    if(!WIND.g_bStarted || WIND.g_bEnded)
+        return;
+
+    if(!WIND.g_bPaused && bStatus)
+    {
+        // implement application restart
+        WIND.g_pMenuRestart.innerHTML   = "Restart";
+        WIND.g_pMenuRestart.onmousedown = function()
+        {
+            this.innerHTML   = "<a href='" + (UTILS.asQueryParam.has("restart") ? window.location : (window.location + (window.location.search ? "&" : "?") + "restart=1")) + "'>Restart complete game ?</a>";
+            this.onmousedown = null;
+        };
+    }
+    else if(WIND.g_bPaused && !bStatus)
+    {
+        // 
+        WIND.g_pMenuRestart.onmousedown = null;
+    }
+
+    // 
+    WIND.g_bPaused = bStatus;
+
+    // 
+    APP.PauseGame(bStatus);
 };
 
 
@@ -417,97 +510,39 @@ WIND.SetupRefresh = function()
 WIND.Resize = function()
 {
     // resize canvas
-    WIND.g_pCanvas.width  = window.innerWidth  - (asQueryParam["launcher"] ? 2 : 0);
-    WIND.g_pCanvas.height = window.innerHeight - (asQueryParam["launcher"] ? 2 : 0);
-    if(asQueryParam["launcher"] ) WIND.g_pCanvas.style.marginTop = "1px";
+    WIND.g_pCanvas.width  = window.innerWidth  - (UTILS.asQueryParam.has("launcher") ? 2 : 0);
+    WIND.g_pCanvas.height = window.innerHeight - (UTILS.asQueryParam.has("launcher") ? 2 : 0);
+    if(UTILS.asQueryParam.has("launcher")) WIND.g_pCanvas.style.marginTop = "1px";
 
     // resize font
     document.body.style.fontSize = (WIND.g_pCanvas.height/800.0) * 100.0 + "%";
 
-    // center logo
-    WIND.g_pMenuLogo.style.marginLeft = -WIND.g_pMenuLogo.naturalWidth/WIND.g_pMenuLogo.naturalHeight * WIND.g_pCanvas.height*0.18*0.5 + "px";
+    // resize logo
+    WIND.g_pMenuLogo.style.marginLeft = -0.5 * WIND.g_pMenuLogo.naturalWidth/WIND.g_pMenuLogo.naturalHeight * WIND.g_pCanvas.height * 0.2 + "px";
 
     // resize menu
-    var sWidth = WIND.g_pCanvas.width + "px";
+    const sWidth = WIND.g_pCanvas.width + "px";
     WIND.g_pMenuHeader.style.width  = sWidth;
     WIND.g_pMenuOption1.style.width = sWidth;
     WIND.g_pMenuOption2.style.width = sWidth;
-    
-    var sMargin = -WIND.g_pCanvas.width*0.5 + "px";
+    WIND.g_pMenuOption3.style.width = sWidth;
+
+    const sMargin = -0.5 * WIND.g_pCanvas.width + "px";
     WIND.g_pMenuHeader.style.marginLeft  = sMargin;
     WIND.g_pMenuOption1.style.marginLeft = sMargin;
     WIND.g_pMenuOption2.style.marginLeft = sMargin;
+    WIND.g_pMenuOption3.style.marginLeft = sMargin;
 
     // set viewport and projection matrix
     GL.viewport(0, 0, WIND.g_pCanvas.width, WIND.g_pCanvas.height);
     mat4.perspective(WIND.g_mProjection, Math.PI*0.35, WIND.g_pCanvas.width / WIND.g_pCanvas.height, 0.1, 1000.0);
 
     // calculate mouse values
-    var oRect = WIND.g_pCanvas.getBoundingClientRect();
+    const oRect = WIND.g_pCanvas.getBoundingClientRect();
     WIND.g_fMouseRange   = 1.0 / WIND.g_pCanvas.height;
     WIND.g_fMouseRect[0] = (oRect.left + (oRect.right  - oRect.left)/2) * WIND.g_fMouseRange;
     WIND.g_fMouseRect[1] = (oRect.top  + (oRect.bottom - oRect.top )/2) * WIND.g_fMouseRange;
-    
+
     // call resize callback
-    APP.Resize();
+    APP.Resize(sWidth, sMargin);
 };
-
-
-// ****************************************************************
-WIND.CURSOR_AUTO      = 0;
-WIND.CURSOR_CROSSHAIR = 1;
-WIND.SetCursor = function(iCursor)
-{
-    // change cursor to crosshair
-    document.body.style.cursor = (iCursor === WIND.CURSOR_CROSSHAIR) ? "crosshair" : "auto";
-};
-
-
-// ****************************************************************
-WIND.SetElementOpacity = function(pElement, fOpacity)
-{
-    // set opacity of element and remove it completely when low
-    pElement.style.opacity = fOpacity;
-    pElement.style.display = (fOpacity <= 0.01) ? "none" : "block";
-};
-
-
-// ****************************************************************
-WIND.SetElementEnabled = function(pElement, bEnabled)
-{
-    // set interaction behavior of element
-    pElement.style.pointerEvents = bEnabled ? "auto" : "none";
-};
-
-
-// ****************************************************************
-function ReadFile(sURL)
-{
-    // create synchronous request to read a file
-    var pRequest = new XMLHttpRequest();
-    pRequest.open("GET", sURL, false);
-    pRequest.send();
-
-    // return file content
-    return pRequest.response;
-}
-
-
-// ****************************************************************
-function Reflect(vOutput, vVelocity, vNormal)
-{
-    var fDot = vec2.dot(vVelocity, vNormal);
-    if(fDot > 0.0) return;
-
-    // calculate reflection vector
-    fDot *= 2.0;
-    vOutput[0] = vVelocity[0] - vNormal[0]*fDot;
-    vOutput[1] = vVelocity[1] - vNormal[1]*fDot;
-}
-
-
-// ****************************************************************
-function Signf(fValue)              {return (fValue < 0.0) ? -1.0 : 1.0;}
-function Clamp(fValue, fFrom, fTo)  {return Math.min(Math.max(fValue, fFrom), fTo);}
-function IntToString(iValue, iSize) {return ('000000000' + iValue).substr(-iSize);}
-function CompareArray(a, b, s)      {for(var i = 0; i < s; ++i) if(a[i] !== b[i]) return false; return true;}

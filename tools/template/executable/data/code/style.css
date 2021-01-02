@@ -1,0 +1,86 @@
+/* default font-face */
+@font-face
+{
+    font-family: 'default_font';
+    src: url('../fonts/default.eot');
+    src: url('../fonts/default.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/default.woff2') format('woff2'),
+         url('../fonts/default.woff') format('woff'),
+         url('../fonts/default.ttf') format('truetype'),
+         url('../fonts/default.svg#noto_sans_uibold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* global style */
+*
+{
+    margin: 0;
+}
+
+/* link style */
+a
+{
+    color: #FFFFFF;
+}
+a:hover
+{
+    color: #1AB3FF;
+}
+
+/* text style */
+p
+{
+    color: #FFFFFF;
+    cursor: default;
+    display: inline;
+    text-shadow:  1px  1px 6px #000000,
+                  1px -1px 6px #000000,
+                 -1px  1px 6px #000000,
+                 -1px -1px 6px #000000;
+}
+
+/* header override */
+.header
+{
+    text-shadow:  1px  1px 10px #000000,
+                  1px -1px 10px #000000,
+                 -1px  1px 10px #000000,
+                 -1px -1px 10px #000000;
+}
+
+/* button override */
+.button
+{
+    text-decoration: underline;
+    cursor: pointer;
+}
+.button:hover
+{
+    color: #1AB3FF;
+}
+
+/* centered division */
+.middle
+{
+    width: 800px;
+    height: auto;
+    left: 50%;
+    margin: 0 0 0 -400px;
+    text-align: center;
+}
+
+/* centered and side division */
+.middle, .side
+{
+    font-family: default_font, serif;
+    position: absolute;
+    opacity: 0.0;
+    pointer-events: none;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

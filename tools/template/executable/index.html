@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+    <head>
+
+        <title>Wind App</title>
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+
+        <meta name="author" content="Martin Mauersics" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="javascript, webgl, 3d, game, open source" />
+
+        <meta name="robots" content="index, follow" />
+
+        <link rel="icon" sizes="32x32" type="image/x-icon" href="data/textures/favicon.ico" />
+        <link rel="icon" sizes="128x128" type="image/png" href="data/textures/favicon-128.png" />
+        <link rel="icon" sizes="256x256" type="image/png" href="data/textures/favicon-256.png" />
+
+        <link rel="stylesheet" href="data/code/style.css" />
+
+        <script src="data/code/pack.js"></script>
+
+    </head>
+
+    <body style="background-color: #000000; display: block; font-size: 100%;">
+
+        <!-- Browser Support -->
+        <noscript>
+            <p>Please enable JavaScript to play this game.</p>
+        </noscript>
+
+        <!-- Main Canvas -->
+        <canvas id="canvas" width="800" height="600" style="margin: auto; display: block;">
+            <p>Your browser does not support HTML5.</p>
+        </canvas>
+
+        <!-- Texture Canvas -->
+        <canvas id="texture" width="256" height="256" style="margin: auto; display: none;"></canvas>
+
+        <!-- Audio Stream -->
+        <audio id="stream" preload="auto">
+            <source src="" type="audio/ogg">
+            <source src="" type="audio/mpeg">
+        </audio>
+
+        <!-- Images -->
+        <img id="logo" src="data/textures/maus_logo.png" alt="Maus Games" style="opacity: 0.0; display: none; position: absolute; left: 50%; top: 37%; height: 20%;" />
+
+        <!-- Game Title -->
+        <div id="text-header" class="middle" style="font-size: 5.1em; top: 26.2%;">
+            <p class="header">Wind App</p>
+        </div>
+
+        <!-- Game Options -->
+        <div id="text-option-1" class="middle" style="font-size: 2.8em; top: 56.6%;">
+            <p id="start" class="button">Start Game</p>
+        </div>
+        <div id="text-option-2" class="middle" style="font-size: 2.8em; top: 51.6%;">
+            <p id="resume" class="button">Resume</p>
+        </div>
+        <div id="text-option-3" class="middle" style="font-size: 2.2em; top: 61.6%;">
+            <p id="restart" class="button">Restart</p>
+        </div>
+
+        <!-- Copyright -->
+        <div id="text-bottom-left" class="side" style="font-size: 1.8em; left: 1%; bottom: 1%;">
+            <p>(c) ##YYYY## <a href="https://www.maus-games.at" target="_blank">Martin Mauersics</a> - v0.0.0</p>
+        </div>
+
+        <!-- Music -->
+        <div id="text-bottom-right" class="side" style="font-size: 1.8em; right: 1%; bottom: 1%;">
+            <p>Music by <a href="##URL##" target="_blank">##NAME##</a></p>
+        </div>
+
+        <!-- Video Configuration -->
+        <div id="text-top-right" class="side" style="font-size: 2.8em; right: 1%; top: 1%;">
+            <p id="fullscreen" class="button"><span title="Fullscreen" onmouseover="this.innerHTML='Fullscreen';" onmouseout="this.innerHTML='F';">F</span></p>&nbsp;&nbsp;
+            <p id="quality" class="button"><span title="Quality" onmouseover="this.innerHTML='Quality';" onmouseout="this.innerHTML='Q';">Q</span></p>
+        </div>
+
+        <!-- Audio Configuration -->
+        <div id="text-top-left" class="side" style="font-size: 2.8em; left: 1%; top: 1%;">
+            <p id="music" class="button"><span title="Music" onmouseover="this.innerHTML='Music';" onmouseout="this.innerHTML='M';">M</span></p>&nbsp;&nbsp;
+            <p id="sound" class="button"><span title="Sound" onmouseover="this.innerHTML='Sound';" onmouseout="this.innerHTML='S';">S</span></p>
+        </div>
+
+    </body>
+
+</html>

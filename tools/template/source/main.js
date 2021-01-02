@@ -1,9 +1,12 @@
 "use strict";
+const APP = {};
 
 
 // ****************************************************************
-var APP = {};
-APP.MUSIC_LIST = {};
+APP.SETTINGS = {};
+APP.SETTINGS.Alpha   = false;
+APP.SETTINGS.Depth   = true;
+APP.SETTINGS.Stencil = false;
 
 
 // ****************************************************************
@@ -35,7 +38,28 @@ APP.Move = function()
 
 
 // ****************************************************************
+APP.MouseDown = function(iButton)
+{
+
+};
+
+
+// ****************************************************************
+APP.MouseUp = function(iButton)
+{
+
+};
+
+
+// ****************************************************************
 APP.KeyDown = function(iKey)
+{
+
+};
+
+
+// ****************************************************************
+APP.KeyUp = function(iKey)
 {
 
 };
@@ -68,14 +92,16 @@ APP.ChangeOptionMusic = function(bStatus)
 
 };
 
+
 // ****************************************************************
 APP.ChangeOptionSound = function(bStatus)
 {
 
 };
 
+
 // ****************************************************************
-APP.Resize = function()
+APP.Resize = function(sWidth, sMargin)
 {
 
 };
