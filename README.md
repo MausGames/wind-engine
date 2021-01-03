@@ -1,8 +1,8 @@
 # Wind Engine
 
-The Wind Engine is an extremely light JavaScript/HTML5 framework based on WebGL for **rapid prototyping and small games**. 
+The Wind Engine is a light JavaScript framework based on WebGL for **rapid prototyping and small games**.
 
-It is mainly intended for simple personal projects, which then are able to use the **very comprehensive and powerful browser platform** and its interfaces.
+It is mainly intended for simple personal projects, which are then able to use the **very comprehensive and powerful browser platform** and its interfaces.
 
 > - Basic Application Structure
 > - WebGL and Web Audio API Integration
