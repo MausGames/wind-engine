@@ -70,6 +70,69 @@ UTILS.Pow3 = function(fValue)
 
 
 // ****************************************************************
+UTILS.Lerp = function(x, y, s)
+{
+    return x * (1.0 - s) + y * s;
+};
+
+UTILS.LerpSmooth = function(x, y, s)
+{
+    return UTILS.Lerp(x, y, 0.5 - 0.5 * Math.cos(s * Math.PI));
+};
+
+UTILS.LerpBreak = function(x, y, s)
+{
+    return UTILS.Lerp(x, y, Math.sin(s * (Math.PI * 0.5)));
+};
+
+UTILS.LerpHermite3 = function(x, y, s)
+{
+    return UTILS.Lerp(x, y, (3.0 - 2.0 * s) * s * s);
+};
+
+UTILS.LerpHermite5 = function(x, y, s)
+{
+    return UTILS.Lerp(x, y, (10.0 + (-15.0 + 6.0 * s) * s) * s * s * s);
+};
+
+
+// ****************************************************************
+UTILS.Step = function(a, b, x)
+{
+    return UTILS.Clamp((x - a) / (b - a), 0.0, 1.0);
+};
+
+UTILS.StepHermite3 = function(a, b, x)
+{
+    return UTILS.LerpHermite3(0.0, 1.0, UTILS.Step(a, b, x)); 
+};
+
+UTILS.StepHermite5 = function(a, b, x)
+{
+    return UTILS.LerpHermite5 (0.0, 1.0, UTILS.Step(a, b, x));
+};
+
+
+// ****************************************************************
+UTILS.Rand = Math.random;
+
+UTILS.RandInt = function(iMin, iMax)
+{
+    return Math.floor(UTILS.RandFloat(iMin, iMax + 1));
+};
+
+UTILS.RandFloat = function(fMin, fMax)
+{
+    return fMin + UTILS.Rand() * (fMax - fMin);
+};
+
+UTILS.RandBool = function(fChance)
+{
+    return (UTILS.Rand() < fChance);
+};
+
+
+// ****************************************************************
 UTILS.Vec2Reflect = function(vOutput, vVelocity, vNormal)
 {
     const fDot = vec2.dot(vVelocity, vNormal);
@@ -99,6 +162,24 @@ UTILS.Vec2Angle = function(vVector)
 
 
 // ****************************************************************
+UTILS.Vec3RgbToHsv = function(vOutput, x, y, z)
+{
+    const R = x;
+    const G = y;
+    const B = z;
+
+    const v = Math.max(R, G, B);
+    const d = v - Math.min(R, G, B);
+
+    if(!d) return vec3.set(vOutput, 0.0, 0.0, v);
+
+    const  s = d / v;
+
+    if(R === v) return vec3.set(vOutput, (0.0 + (G - B) / d) / 6.0, s, v);
+    if(G === v) return vec3.set(vOutput, (2.0 + (B - R) / d) / 6.0, s, v);
+                return vec3.set(vOutput, (4.0 + (R - G) / d) / 6.0, s, v);
+};
+
 UTILS.Vec3HsvToRgb = function(vOutput, x, y, z)
 {
     const H = x * 6.0;
@@ -113,15 +194,13 @@ UTILS.Vec3HsvToRgb = function(vOutput, x, y, z)
 
     switch(h)
     {
-    case 1:  vec3.set(vOutput, V - t, V,     p);     break;
-    case 2:  vec3.set(vOutput, p,     V,     p + t); break;
-    case 3:  vec3.set(vOutput, p,     V - t, V);     break;
-    case 4:  vec3.set(vOutput, p + t, p,     V);     break;
-    case 5:  vec3.set(vOutput, V,     p,     V - t); break;
-    default: vec3.set(vOutput, V,     p + t, p);     break;
+    case 1:  return vec3.set(vOutput, V - t, V,     p);
+    case 2:  return vec3.set(vOutput, p,     V,     p + t);
+    case 3:  return vec3.set(vOutput, p,     V - t, V);
+    case 4:  return vec3.set(vOutput, p + t, p,     V);
+    case 5:  return vec3.set(vOutput, V,     p,     V - t);
+    default: return vec3.set(vOutput, V,     p + t, p);
     }
-
-    return vOutput;
 };
 
 

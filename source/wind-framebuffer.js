@@ -30,7 +30,7 @@ Destructor()
 {
     // reset current framebuffer
     if(windFrameBuffer.s_pCurFrameBuffer === this)
-        windFrameBuffer.s_pCurFrameBuffer = null;
+        windFrameBuffer.Disable();
 
     // delete texture and framebuffer
     this.m_pTexture.Destructor();
