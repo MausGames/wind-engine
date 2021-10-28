@@ -2,14 +2,14 @@
 @font-face
 {
     font-family: 'default_font';
+    font-weight: normal;
+    font-style: normal;
     src: url('../fonts/default.eot');
     src: url('../fonts/default.eot?#iefix') format('embedded-opentype'),
          url('../fonts/default.woff2') format('woff2'),
          url('../fonts/default.woff') format('woff'),
          url('../fonts/default.ttf') format('truetype'),
          url('../fonts/default.svg#noto_sans_uibold') format('svg');
-    font-weight: normal;
-    font-style: normal;
 }
 
 /* global style */

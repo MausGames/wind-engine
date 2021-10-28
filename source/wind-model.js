@@ -9,9 +9,9 @@
 "use strict";
 class windModel {
 
-// TODO: split enable disable ?
-// TODO: half float compression for pos (Float16Array ?), 1010102 compression for normal (extensions ? WGL2 ?)
-// TODO: allow loading from file (which format ?)
+// TODO 4: split enable disable ?
+// TODO 3: half float compression for pos (Float16Array ?), 1010102 compression for normal (extensions ? WGL2 ?)
+// TODO 3: allow loading from file (which format ?)
 
 
 // ****************************************************************

@@ -9,7 +9,7 @@
 "use strict";
 class windShader {
 
-// TODO: allow loading from file (split up, .vert, .frag, etc.)
+// TODO 3: allow loading from file (split up, .vert, .frag, etc.)
 
 
 // ****************************************************************

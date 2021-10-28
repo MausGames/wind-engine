@@ -9,8 +9,8 @@
 "use strict";
 class windTexture {
 
-// TODO: WEBGL_compressed_texture_s3tc
-// TODO: 1, 2, 3 channel textures (+EXT_texture_compression_rgtc)
+// TODO 3: WEBGL_compressed_texture_s3tc
+// TODO 3: 1, 2, 3 channel textures (+EXT_texture_compression_rgtc)
 
 
 // ****************************************************************

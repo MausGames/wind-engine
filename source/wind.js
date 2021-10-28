@@ -26,7 +26,7 @@
 "use strict";
 const WIND = {};
 
-// TODO: move more default functionality from ThrowOut to WindEngine (especially related to pause and menu handling, which is currently only partially ported to engine)
+// TODO 4: move more default functionality from ThrowOut to WindEngine (especially related to pause and menu handling, which is currently only partially ported to engine)
 
 
 // ****************************************************************
@@ -102,13 +102,16 @@ window.addEventListener("load", function()
         GL = WIND.g_pCanvas.getContext("webgl", abProperty);
         if(!GL)
         {
-            // show error
-            document.body.innerHTML = "Your browser does not support WebGL.";
-            return;
+            GL = WIND.g_pCanvas.getContext("experimental-webgl", abProperty);
+            if(!GL)
+            {
+                // show error
+                document.body.innerHTML = "Your browser does not support WebGL.";
+                return;
+            }
+            else GL.iVersion = 0;
         }
-
-        // save WebGL status
-        GL.iVersion = 1;
+        else GL.iVersion = 1;
     }
     else GL.iVersion = 2;
 
@@ -164,7 +167,7 @@ WIND.Render = function(iNewTime)
     WIND.g_fSaveTime   = fNewSaveTime;
 
     // smooth last frame time and increase total time
-    WIND.g_fTime       = (fNewLastTime > 0.1) ? 0.0 : (0.85 * WIND.g_fTime + 0.15 * fNewLastTime);
+    WIND.g_fTime       = (fNewLastTime > 0.1) ? 0.001 : (0.85 * WIND.g_fTime + 0.15 * fNewLastTime);
     WIND.g_fTotalTime += WIND.g_fTime;
 
     // clear framebuffer
@@ -510,9 +513,10 @@ WIND.PauseGame = function(bStatus)
 WIND.Resize = function()
 {
     // resize canvas
-    WIND.g_pCanvas.width  = window.innerWidth  - (UTILS.asQueryParam.has("launcher") ? 2 : 0);
-    WIND.g_pCanvas.height = window.innerHeight - (UTILS.asQueryParam.has("launcher") ? 2 : 0);
-    if(UTILS.asQueryParam.has("launcher")) WIND.g_pCanvas.style.marginTop = "1px";
+    const bLauncher = UTILS.asQueryParam.has("launcher");
+    WIND.g_pCanvas.width  = window.innerWidth  - (bLauncher ? 2 : 0);
+    WIND.g_pCanvas.height = window.innerHeight - (bLauncher ? 2 : 0);
+    if(bLauncher) WIND.g_pCanvas.style.marginTop = "1px";
 
     // resize font
     document.body.style.fontSize = (WIND.g_pCanvas.height/800.0) * 100.0 + "%";
