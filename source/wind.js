@@ -214,12 +214,17 @@ WIND.SetupVideo = function()
     GL.depthMask(true);
     GL.clearDepth(1.0);
 
+    // setup stencil testing
+    GL.disable(GL.STENCIL_TEST);
+    GL.stencilMask(255);
+    GL.clearStencil(0);
+
     // setup culling
     GL.enable(GL.CULL_FACE);
     GL.cullFace(GL.BACK);
     GL.frontFace(GL.CCW);
 
-    // setup alpha blending
+    // setup blending
     GL.enable(GL.BLEND);
     GL.disable(GL.SAMPLE_ALPHA_TO_COVERAGE);
     GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
@@ -228,6 +233,7 @@ WIND.SetupVideo = function()
     // setup shading and rasterization
     if(GL.iVersion >= 2) GL.hint(GL.FRAGMENT_SHADER_DERIVATIVE_HINT, GL.NICEST);
     GL.disable(GL.DITHER);
+    GL.disable(GL.SCISSOR_TEST);
     GL.colorMask(true, true, true, true);
     GL.clearColor(0.0, 0.0, 0.0, 0.0);
 
@@ -322,6 +328,8 @@ WIND.SetupInput = function()
     {
         if(pEvent.code === UTILS.KEY.ESCAPE) WIND.PauseGame(true);
         APP.KeyDown(pEvent.code);
+
+        pEvent.preventDefault();   // prevent scrolling while in focus
     });
     document.addEventListener("keyup", function(pEvent)
     {

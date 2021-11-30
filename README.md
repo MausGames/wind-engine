@@ -24,9 +24,9 @@ It is mainly intended for simple personal projects, which are then able to use t
 
 <table>
     <tr>
-        <td><a href="material/screenshots/to_screen_new_001.jpg?raw=true"><img src="material/screenshots/to_screen_new_001t.jpg" /></a></td>
-        <td><a href="material/screenshots/keg_screen_003.jpg?raw=true"><img src="material/screenshots/keg_screen_003t.jpg" /></a></td>
-        <td><a href="material/screenshots/ans_screen_002.jpg?raw=true"><img src="material/screenshots/ans_screen_002t.jpg" /></a></td>
+        <td><a href="material/screenshots/to_screen_new_001.jpg?raw=true"><img src="material/screenshots/to_screen_new_001t.jpg"></a></td>
+        <td><a href="material/screenshots/keg_screen_003.jpg?raw=true"><img src="material/screenshots/keg_screen_003t.jpg"></a></td>
+        <td><a href="material/screenshots/ans_screen_002.jpg?raw=true"><img src="material/screenshots/ans_screen_002t.jpg"></a></td>
     </tr>
 </table>
 
