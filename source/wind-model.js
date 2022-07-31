@@ -45,7 +45,7 @@ Destructor()
     GL.deleteBuffer(this.m_pIndexBuffer);
 
     // delete vertex array object
-    GL.deleteVertexArray(this.m_pVertexArray);
+    if(GL.iVersion >= 2) GL.deleteVertexArray(this.m_pVertexArray);
 }
 
 

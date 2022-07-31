@@ -31,7 +31,7 @@ Models
 - #####
 
 Fonts
-- Google : Noto Sans (OFL)
+- Google : Noto Sans : fonts/default.* (OFL)
 
 
 -------------------------------------------------------------------

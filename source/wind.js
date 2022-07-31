@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 //*----------------------------------------------------------------------------*//
-//| Wind Engine v0.1.0 (https://www.maus-games.at)                             |//
+//| Wind Engine v1.0.0 (https://www.maus-games.at)                             |//
 //*----------------------------------------------------------------------------*//
 //| Copyright (c) 2014 Martin Mauersics                                        |//
 //|                                                                            |//
@@ -27,6 +27,9 @@
 const WIND = {};
 
 // TODO 4: move more default functionality from ThrowOut to WindEngine (especially related to pause and menu handling, which is currently only partially ported to engine)
+// TODO 3: ANGLE_instanced_arrays, EXT_color_buffer_float, EXT_color_buffer_half_float, EXT_frag_depth, EXT_sRGB, EXT_texture_compression_rgtc, EXT_texture_norm16
+// TODO 3: KHR_parallel_shader_compile, OES_standard_derivatives, OES_texture_float, OES_texture_float_linear, OES_texture_half_float, OES_texture_half_float_linear
+// TODO 3: OES_vertex_array_object, WEBGL_color_buffer_float, WEBGL_compressed_texture_s3tc, WEBGL_depth_texture, WEBGL_draw_buffers
 
 
 // ****************************************************************

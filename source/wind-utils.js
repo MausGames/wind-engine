@@ -102,14 +102,24 @@ UTILS.Step = function(a, b, x)
     return UTILS.Clamp((x - a) / (b - a), 0.0, 1.0);
 };
 
+UTILS.StepSmooth = function(a, b, x)
+{
+    return UTILS.LerpSmooth(0.0, 1.0, UTILS.Step(a, b, x));
+};
+
+UTILS.StepBreak = function(a, b, x)
+{
+    return UTILS.LerpBreak(0.0, 1.0, UTILS.Step(a, b, x));
+};
+
 UTILS.StepHermite3 = function(a, b, x)
 {
-    return UTILS.LerpHermite3(0.0, 1.0, UTILS.Step(a, b, x)); 
+    return UTILS.LerpHermite3(0.0, 1.0, UTILS.Step(a, b, x));
 };
 
 UTILS.StepHermite5 = function(a, b, x)
 {
-    return UTILS.LerpHermite5 (0.0, 1.0, UTILS.Step(a, b, x));
+    return UTILS.LerpHermite5(0.0, 1.0, UTILS.Step(a, b, x));
 };
 
 
