@@ -51,6 +51,18 @@ UTILS.asQueryParam = function()
 
 
 // ****************************************************************
+UTILS.ToInt = function(fValue)
+{
+    return fValue | 0;
+};
+
+UTILS.ToUint = function(fValue)
+{
+    return fValue >>> 0;
+};
+
+
+// ****************************************************************
 UTILS.Clamp = function(fValue, fFrom, fTo)
 {
     return Math.min(Math.max(fValue, fFrom), fTo);
@@ -128,7 +140,12 @@ UTILS.Rand = Math.random;
 
 UTILS.RandInt = function(iMin, iMax)
 {
-    return Math.floor(UTILS.RandFloat(iMin, iMax + 1));
+    return UTILS.ToInt(UTILS.RandFloat(iMin, iMax + 1));
+};
+
+UTILS.RandUint = function(iMin, iMax)
+{
+    return UTILS.ToUint(UTILS.RandFloat(iMin, iMax + 1));
 };
 
 UTILS.RandFloat = function(fMin, fMax)
@@ -196,7 +213,7 @@ UTILS.Vec3HsvToRgb = function(vOutput, x, y, z)
     const S = y;
     const V = z;
 
-    const h = Math.floor(H);
+    const h = UTILS.ToUint(H);
 
     const s = V * S;
     const t = s * (H - h);
@@ -217,22 +234,22 @@ UTILS.Vec3HsvToRgb = function(vOutput, x, y, z)
 // ****************************************************************
 UTILS.PackUnorm32To16 = function(fValue)
 {
-    return Math.floor(fValue * 65535.0);
+    return UTILS.ToUint(fValue * 65535.0);
 };
 
 UTILS.PackSnorm32To16 = function(fValue)
 {
-    return Math.floor((fValue < 0.0) ? (65536.0 + fValue * 32768.0) : (fValue * 32767.0));
+    return UTILS.ToUint((fValue < 0.0) ? (65536.0 + fValue * 32768.0) : (fValue * 32767.0));
 };
 
 UTILS.PackUnorm32To8 = function(fValue)
 {
-    return Math.floor(fValue * 255.0);
+    return UTILS.ToUint(fValue * 255.0);
 };
 
 UTILS.PackSnorm32To8 = function(fValue)
 {
-    return Math.floor((fValue < 0.0) ? (256.0 + fValue * 128.0) : (fValue * 127.0));
+    return UTILS.ToUint((fValue < 0.0) ? (256.0 + fValue * 128.0) : (fValue * 127.0));
 };
 
 
