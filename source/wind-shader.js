@@ -25,6 +25,50 @@ constructor()
 
     // create static properties
     windShader.s_pCurProgram = null;
+
+// ****************************************************************
+windShader.GLOBAL_VERTEX =
+"attribute vec3 a_v3Position;"      + "\n" +
+"attribute vec2 a_v2Texture;"       + "\n" +
+"attribute vec3 a_v3Normal;"        + "\n" +
+"uniform   mat4 u_m4ModelView;"     + "\n" +
+"uniform   mat4 u_m4ModelViewProj;" + "\n" +
+"uniform   vec2 u_v2TexSize;"       + "\n" +
+"uniform   vec2 u_v2TexOffset;"     + "\n";
+
+
+// ****************************************************************
+windShader.GLOBAL_FRAGMENT =
+"precision mediump float;"                                                             + "\n" +
+""                                                                                     + "\n" +
+"uniform vec4 u_v4Color;"                                                              + "\n" +
+""                                                                                     + "\n" +
+"#if (__VERSION__ >= 300)"                                                             + "\n" +
+"    #define coreIntMod(a,b) ((a) % (b))"                                              + "\n" +
+"#else"                                                                                + "\n" +
+"    int   coreIntMod(const in int   a, const in int b) {return (a - (b * (a / b)));}" + "\n" +
+"    ivec2 coreIntMod(const in ivec2 a, const in int b) {return (a - (b * (a / b)));}" + "\n" +
+"    ivec3 coreIntMod(const in ivec3 a, const in int b) {return (a - (b * (a / b)));}" + "\n" +
+"    ivec4 coreIntMod(const in ivec4 a, const in int b) {return (a - (b * (a / b)));}" + "\n" +
+"#endif"                                                                               + "\n" +
+""                                                                                     + "\n" +
+"float coreDither(const in ivec2 i2PixelCoord)"                                        + "\n" +
+"{"                                                                                    + "\n" +
+"    mat4 c_m4Matrix = mat4( 0.0,  8.0,  2.0, 10.0,"                                   + "\n" +
+"                           12.0,  4.0, 14.0,  6.0,"                                   + "\n" +
+"                            3.0, 11.0,  1.0,  9.0,"                                   + "\n" +
+"                           15.0,  7.0, 13.0,  5.0) / 15.0 - 0.5;"                     + "\n" +
+""                                                                                     + "\n" +
+"    ivec2 i2Index = coreIntMod(i2PixelCoord, 4);"                                     + "\n" +
+"    for(int i = 0; i < 4; i++)"                                                       + "\n" +
+"    {"                                                                                + "\n" +
+"        for(int j = 0; j < 4; j++)"                                                   + "\n" +
+"        {"                                                                            + "\n" +
+"            if((i == i2Index.y) && (j == i2Index.x)) return c_m4Matrix[i][j];"        + "\n" +
+"        }"                                                                            + "\n" +
+"    }"                                                                                + "\n" +
+"}"                                                                                    + "\n" +
+"float coreDither() {return coreDither(ivec2(gl_FragCoord.xy));}"                      + "\n";
 }
 
 
@@ -53,12 +97,12 @@ Create(sVertexShader, sFragmentShader)
 {
     // create vertex shader
     this.m_pVertexShader = GL.createShader(GL.VERTEX_SHADER);
-    GL.shaderSource(this.m_pVertexShader, sVertexShader);
+    GL.shaderSource(this.m_pVertexShader, windShader.GLOBAL_VERTEX + sVertexShader);
     GL.compileShader(this.m_pVertexShader);
 
     // create fragment shader
     this.m_pFragmentShader = GL.createShader(GL.FRAGMENT_SHADER);
-    GL.shaderSource(this.m_pFragmentShader, sFragmentShader);
+    GL.shaderSource(this.m_pFragmentShader, windShader.GLOBAL_FRAGMENT + sFragmentShader);
     GL.compileShader(this.m_pFragmentShader);
 
     // attach shaders to program object
