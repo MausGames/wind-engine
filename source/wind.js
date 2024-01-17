@@ -95,8 +95,8 @@ window.addEventListener("load", function()
 
     // define WebGL context properties
     const abProperty = {alpha : APP.SETTINGS.Alpha, depth : APP.SETTINGS.Depth, stencil : APP.SETTINGS.Stencil,
-                        antialias : true, premultipliedAlpha : true, preserveDrawingBuffer : false,
-                        preferLowPowerToHighPerformance : false, failIfMajorPerformanceCaveat : false};
+                        antialias : true, premultipliedAlpha : true, preserveDrawingBuffer : false, desynchronized : true,
+                        powerPreference : "default", failIfMajorPerformanceCaveat : false};
 
     // retrieve WebGL context
     GL = WIND.g_pCanvas.getContext("webgl2", abProperty);

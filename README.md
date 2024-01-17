@@ -15,10 +15,10 @@ It is mainly intended for simple personal projects, which are then able to use t
 #
 
 | Name | Description | Links |
-| - | - | - |
-| Throw Out | Browser-based Breakout clone with fast 3d graphics and a unique design | [GitHub](https://github.com/MausGames/throw-out), [GitLab](https://gitlab.com/MausGames/throw-out) |
-| Keep Going | Fast-paced reaction-skill game made on [Mi'pu'mi][1] day | [GitHub](https://github.com/MausGames/keep-going), [GitLab](https://gitlab.com/MausGames/keep-going) |
-| Another Side | Minimalist puzzle cube made on [Mi'pu'mi][1] day | [GitHub](https://github.com/MausGames/another-side), [GitLab](https://gitlab.com/MausGames/another-side) |
+| --- | --- | --- |
+| [Throw Out](https://gamejolt.com/games/throw-out/20444) | Browser-based Breakout clone with fast 3d graphics and a unique design | [GitHub](https://github.com/MausGames/throw-out), [GitLab](https://gitlab.com/MausGames/throw-out) |
+| [Keep Going](https://mausgames.itch.io/keep-going) | Fast-paced reaction-skill game made on [Mi'pu'mi][1] day | [GitHub](https://github.com/MausGames/keep-going), [GitLab](https://gitlab.com/MausGames/keep-going) |
+| [Another Side](https://mausgames.itch.io/another-side) | Minimalist puzzle cube made on [Mi'pu'mi][1] day | [GitHub](https://github.com/MausGames/another-side), [GitLab](https://gitlab.com/MausGames/another-side) |
 
 #
 
