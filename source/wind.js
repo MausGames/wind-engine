@@ -256,7 +256,7 @@ WIND.SetupAudio = function()
     WIND.g_pAudioStream = document.getElementById("stream");
 
     // check for supported audio format
-    const sFormat = (WIND.g_pAudioStream.canPlayType && (WIND.g_pAudioStream.canPlayType("audio/ogg") !== "")) ? ".ogg" : ".mp3";
+    const sFormat = (WIND.g_pAudioStream.canPlayType && (WIND.g_pAudioStream.canPlayType("audio/ogg;codecs=opus") !== "")) ? ".opus" : ".mp3";
 
     // 
     WIND.g_pAudioStream.bPaused = true;

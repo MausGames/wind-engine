@@ -1,6 +1,6 @@
 #!/bin/bash
 
-_PATH_="$(dirname $(realpath $0))"
+_PATH_="$(dirname "$(realpath "$")")"
 
 _EXECUTABLE_="java -jar $_PATH_/base/closure-compiler.jar"
 _PARAMETERS_="--strict_mode_input --dependency_mode SORT_ONLY --language_in ECMASCRIPT_2020 --language_out ECMASCRIPT_2015 --js '$_PATH_/../../source/**.js' --js '$1' --js_output_file $2"
