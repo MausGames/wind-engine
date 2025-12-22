@@ -31,6 +31,8 @@ It is mainly intended for simple personal projects, which are then able to use t
 | [Keep Going](https://mausgames.itch.io/keep-going) | Fast-paced reaction-skill game made on [Mi'pu'mi][1] day | [GitHub](https://github.com/MausGames/keep-going), [GitLab](https://gitlab.com/MausGames/keep-going) |
 | [Another Side](https://mausgames.itch.io/another-side) | Minimalist puzzle cube made on [Mi'pu'mi][1] day | [GitHub](https://github.com/MausGames/another-side), [GitLab](https://gitlab.com/MausGames/another-side) |
 
+<br>
+
 <table>
     <tr>
         <td><a href="material/screenshots/to_screen_new_001.jpg?raw=true"><img src="material/screenshots/to_screen_new_001t.jpg"></a></td>
