@@ -95,7 +95,7 @@ window.addEventListener("load", function()
 
     // define WebGL context properties
     const abProperty = {alpha : APP.SETTINGS.Alpha, depth : APP.SETTINGS.Depth, stencil : APP.SETTINGS.Stencil,
-                        antialias : true, premultipliedAlpha : true, preserveDrawingBuffer : false, desynchronized : true,
+                        antialias : true, premultipliedAlpha : true, preserveDrawingBuffer : false, desynchronized : false,
                         powerPreference : "default", failIfMajorPerformanceCaveat : false};
 
     // retrieve WebGL context
