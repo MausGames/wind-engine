@@ -201,9 +201,13 @@ WIND.Move = function()
 // ****************************************************************
 WIND.SetupVideo = function()
 {
-    // load extensions
+    // load EXT_texture_filter_anisotropic extension
     GL.ExtAnisotropic = GL.getExtension("EXT_texture_filter_anisotropic");
     if(GL.ExtAnisotropic) GL.ExtAnisotropic.fMaxAnisotropy = GL.getParameter(GL.ExtAnisotropic.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+
+    // load WEBGL_provoking_vertex extension
+    GL.ExtProvoking = GL.getExtension("WEBGL_provoking_vertex");
+    if(GL.ExtProvoking) GL.ExtProvoking.provokingVertexWEBGL(GL.ExtProvoking.FIRST_VERTEX_CONVENTION_WEBGL);
 
     // setup texturing and packing
     GL.hint(GL.GENERATE_MIPMAP_HINT, GL.NICEST);
