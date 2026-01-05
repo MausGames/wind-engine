@@ -136,6 +136,13 @@ UTILS.StepHermite5 = function(a, b, x)
 
 
 // ****************************************************************
+UTILS.Friction = function(fRate, fTime)
+{
+    return Math.exp(-fRate * fTime);
+};
+
+
+// ****************************************************************
 UTILS.Rand = Math.random;
 
 UTILS.RandInt = function(iMin, iMax)
