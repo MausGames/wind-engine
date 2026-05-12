@@ -4,6 +4,7 @@
     font-family: 'default_font';
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
     src: url('../fonts/default.woff2') format('woff2'),
          url('../fonts/default.woff') format('woff'),
          url('../fonts/default.ttf') format('truetype');

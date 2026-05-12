@@ -9,6 +9,8 @@
 "use strict";
 class windFrameBuffer {
 
+// TODO 3: GL.invalidateFramebuffer
+
 
 // ****************************************************************
 constructor()
@@ -57,7 +59,7 @@ Create(iWidth, iHeight, bKeepBound = false)
     // check for valid framebuffer
     const iError = GL.checkFramebufferStatus(GL.FRAMEBUFFER);
     if(iError !== GL.FRAMEBUFFER_COMPLETE)
-        alert("Frame Buffer Error: " + iError);
+        console.error("Frame Buffer Error: " + iError);
 
     // set or reset current framebuffer
     if(bKeepBound) windFrameBuffer.s_pCurFrameBuffer = this;

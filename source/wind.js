@@ -130,7 +130,7 @@ window.addEventListener("load", function()
     TEX.DRAW = TEX.getContext("2d");
 
     // setup system components
-    WIND.SetupVideo();
+    WIND.SetupGraphics();
     WIND.SetupAudio();
     WIND.SetupInput();
     WIND.SetupMenu();
@@ -174,10 +174,13 @@ WIND.Render = function(iNewTime)
     WIND.g_fTotalTime += WIND.g_fTime;
 
     // clear framebuffer
-    GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+    GL.clear(GL.COLOR_BUFFER_BIT | (APP.SETTINGS.Depth ? GL.DEPTH_BUFFER_BIT : 0) | (APP.SETTINGS.Stencil ? GL.STENCIL_BUFFER_BIT : 0));
 
     // render application
     APP.Render();
+
+    // explicitly invalidate depth and stencil buffer
+    if(GL.iVersion >= 2) GL.invalidateFramebuffer(GL.FRAMEBUFFER, [GL.DEPTH, GL.STENCIL]);
 
     // move engine
     WIND.Move();
@@ -199,7 +202,7 @@ WIND.Move = function()
 
 
 // ****************************************************************
-WIND.SetupVideo = function()
+WIND.SetupGraphics = function()
 {
     // load EXT_texture_filter_anisotropic extension
     GL.ExtAnisotropic = GL.getExtension("EXT_texture_filter_anisotropic");
@@ -207,7 +210,7 @@ WIND.SetupVideo = function()
 
     // load WEBGL_provoking_vertex extension
     GL.ExtProvoking = GL.getExtension("WEBGL_provoking_vertex");
-    if(GL.ExtProvoking) GL.ExtProvoking.provokingVertexWEBGL(GL.ExtProvoking.FIRST_VERTEX_CONVENTION_WEBGL);
+    if(GL.ExtProvoking) GL.ExtProvoking["provokingVertexWEBGL"](GL.ExtProvoking["FIRST_VERTEX_CONVENTION_WEBGL"]);
 
     // setup texturing and packing
     GL.hint(GL.GENERATE_MIPMAP_HINT, GL.NICEST);
@@ -245,7 +248,7 @@ WIND.SetupVideo = function()
     GL.clearColor(0.0, 0.0, 0.0, 0.0);
 
     // reset scene
-    GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+    GL.clear(GL.COLOR_BUFFER_BIT | (APP.SETTINGS.Depth ? GL.DEPTH_BUFFER_BIT : 0) | (APP.SETTINGS.Stencil ? GL.STENCIL_BUFFER_BIT : 0));
 };
 
 
@@ -465,7 +468,8 @@ WIND.SetupRefresh = function()
             return window.setTimeout(function()
             {
                 pCallback(iLastTime);
-            }, iTime);
+            },
+            iTime);
         };
         window.cancelAnimationFrame = function(iID)
         {

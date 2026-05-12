@@ -128,14 +128,12 @@ Create(sVertexShader, sFragmentShader)
     GL.linkProgram(this.m_pProgram);
 
     // check for errors
-    if(!GL.getShaderParameter(this.m_pVertexShader, GL.COMPILE_STATUS))
-        alert("Vertex Shader Error: " + GL.getShaderInfoLog(this.m_pVertexShader));
-
-    if(!GL.getShaderParameter(this.m_pFragmentShader, GL.COMPILE_STATUS))
-        alert("Fragment Shader Error: " + GL.getShaderInfoLog(this.m_pFragmentShader));
-
     if(!GL.getProgramParameter(this.m_pProgram, GL.LINK_STATUS))
-        alert("Program Error: " + GL.getProgramInfoLog(this.m_pProgram));
+    {
+        console.error("Program Error: "         + GL.getProgramInfoLog(this.m_pProgram));
+        console.error("Vertex Shader Error: "   + GL.getShaderInfoLog (this.m_pVertexShader));
+        console.error("Fragment Shader Error: " + GL.getShaderInfoLog (this.m_pFragmentShader));
+    }
 
     return this;
 }
