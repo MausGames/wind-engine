@@ -26,22 +26,31 @@ constructor()
     // create static properties
     windShader.s_pCurProgram = null;
 
+
+// ****************************************************************
+windShader.GLOBAL_ALL =
+"#if !defined(GL_FRAGMENT_PRECISION_HIGH)" + "\n" +
+"    #define highp mediump"                + "\n" +
+"#endif"                                   + "\n";
+
+
 // ****************************************************************
 windShader.GLOBAL_VERTEX =
-"attribute vec3 a_v3Position;"      + "\n" +
-"attribute vec2 a_v2Texture;"       + "\n" +
-"attribute vec3 a_v3Normal;"        + "\n" +
-"uniform   mat4 u_m4ModelView;"     + "\n" +
-"uniform   mat4 u_m4ModelViewProj;" + "\n" +
-"uniform   vec2 u_v2TexSize;"       + "\n" +
-"uniform   vec2 u_v2TexOffset;"     + "\n";
+"attribute vec3 a_v3Position;"            + "\n" +
+"attribute vec2 a_v2Texture;"             + "\n" +
+"attribute vec3 a_v3Normal;"              + "\n" +
+""                                        + "\n" +
+"uniform highp   mat4 u_m4ModelView;"     + "\n" +
+"uniform highp   mat4 u_m4ModelViewProj;" + "\n" +
+"uniform mediump vec2 u_v2TexSize;"       + "\n" +
+"uniform mediump vec2 u_v2TexOffset;"     + "\n";
 
 
 // ****************************************************************
 windShader.GLOBAL_FRAGMENT =
-"precision mediump float;"                                                             + "\n" +
+"precision highp float;"                                                               + "\n" +
 ""                                                                                     + "\n" +
-"uniform vec4 u_v4Color;"                                                              + "\n" +
+"uniform mediump vec4 u_v4Color;"                                                      + "\n" +
 ""                                                                                     + "\n" +
 "#if (__VERSION__ >= 300)"                                                             + "\n" +
 "    #define coreIntMod(a,b) ((a) % (b))"                                              + "\n" +
@@ -97,12 +106,12 @@ Create(sVertexShader, sFragmentShader)
 {
     // create vertex shader
     this.m_pVertexShader = GL.createShader(GL.VERTEX_SHADER);
-    GL.shaderSource(this.m_pVertexShader, windShader.GLOBAL_VERTEX + sVertexShader);
+    GL.shaderSource (this.m_pVertexShader, windShader.GLOBAL_ALL + windShader.GLOBAL_VERTEX + sVertexShader);
     GL.compileShader(this.m_pVertexShader);
 
     // create fragment shader
     this.m_pFragmentShader = GL.createShader(GL.FRAGMENT_SHADER);
-    GL.shaderSource(this.m_pFragmentShader, windShader.GLOBAL_FRAGMENT + sFragmentShader);
+    GL.shaderSource (this.m_pFragmentShader, windShader.GLOBAL_ALL + windShader.GLOBAL_FRAGMENT + sFragmentShader);
     GL.compileShader(this.m_pFragmentShader);
 
     // attach shaders to program object
