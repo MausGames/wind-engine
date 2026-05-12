@@ -40,12 +40,12 @@
         </noscript>
 
         <!-- Main Canvas -->
-        <canvas id="canvas" width="800" height="600" style="margin: auto; display: block;"> <!-- oncontextmenu="return false;" -->
+        <canvas id="canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1;"> <!-- oncontextmenu="return false;" -->
             <p>Your browser does not support HTML5.</p>
         </canvas>
 
         <!-- Texture Canvas -->
-        <canvas id="texture" width="256" height="256" style="margin: auto; display: none;"></canvas>
+        <canvas id="texture" style="display: none;"></canvas>
 
         <!-- Audio Stream -->
         <audio id="stream" preload="auto">

@@ -527,27 +527,32 @@ WIND.PauseGame = function(bStatus)
 // ****************************************************************
 WIND.Resize = function()
 {
-    // resize canvas
-    const bLauncher = UTILS.asQueryParam.has("launcher");
-    WIND.g_pCanvas.width  = window.innerWidth  - (bLauncher ? 2 : 0);
-    WIND.g_pCanvas.height = window.innerHeight - (bLauncher ? 2 : 0);
+    // check window properties
+    const bLauncher    = UTILS.asQueryParam.has("launcher");
+    const fCoordWidth  = window.innerWidth  - (bLauncher ? 2 : 0);
+    const fCoordHeight = window.innerHeight - (bLauncher ? 2 : 0);
+    const fPixelRatio  = window.devicePixelRatio || 1.0;
+
+    // resize canvas (with pixel-density)
+    WIND.g_pCanvas.width  = Math.round(window.innerWidth  * fPixelRatio) - (bLauncher ? 2 : 0);
+    WIND.g_pCanvas.height = Math.round(window.innerHeight * fPixelRatio) - (bLauncher ? 2 : 0);
     if(bLauncher) WIND.g_pCanvas.style.marginTop = "1px";
 
     // resize font
-    document.body.style.fontSize = (WIND.g_pCanvas.height/800.0) * 100.0 + "%";
+    document.body.style.fontSize = (fCoordHeight / 800.0) * 100.0 + "%";
 
     // resize logo
-    WIND.g_pMenuLogo.style.marginLeft = -0.5 * WIND.g_pMenuLogo.naturalWidth/WIND.g_pMenuLogo.naturalHeight * WIND.g_pCanvas.height * 0.2 + "px";
+    WIND.g_pMenuLogo.style.marginLeft = -0.5 * WIND.g_pMenuLogo.naturalWidth/WIND.g_pMenuLogo.naturalHeight * fCoordHeight * 0.2 + "px";
 
     // resize menu
-    const sWidth = WIND.g_pCanvas.width + "px";
-    WIND.g_pMenuHeader.style.width  = sWidth;
+    const sWidth = fCoordWidth + "px";
+    WIND.g_pMenuHeader .style.width = sWidth;
     WIND.g_pMenuOption1.style.width = sWidth;
     WIND.g_pMenuOption2.style.width = sWidth;
     WIND.g_pMenuOption3.style.width = sWidth;
 
-    const sMargin = -0.5 * WIND.g_pCanvas.width + "px";
-    WIND.g_pMenuHeader.style.marginLeft  = sMargin;
+    const sMargin = -0.5 * fCoordWidth + "px";
+    WIND.g_pMenuHeader .style.marginLeft = sMargin;
     WIND.g_pMenuOption1.style.marginLeft = sMargin;
     WIND.g_pMenuOption2.style.marginLeft = sMargin;
     WIND.g_pMenuOption3.style.marginLeft = sMargin;
@@ -558,9 +563,9 @@ WIND.Resize = function()
 
     // calculate mouse values
     const oRect = WIND.g_pCanvas.getBoundingClientRect();
-    WIND.g_fMouseRange   = 1.0 / WIND.g_pCanvas.height;
+    WIND.g_fMouseRange   = 1.0 / fCoordHeight;
     WIND.g_fMouseRect[0] = (oRect.left + (oRect.right  - oRect.left)/2) * WIND.g_fMouseRange;
-    WIND.g_fMouseRect[1] = (oRect.top  + (oRect.bottom - oRect.top )/2) * WIND.g_fMouseRange;
+    WIND.g_fMouseRect[1] = (oRect.top  + (oRect.bottom - oRect.top) /2) * WIND.g_fMouseRange;
 
     // call resize callback
     APP.Resize(sWidth, sMargin);
